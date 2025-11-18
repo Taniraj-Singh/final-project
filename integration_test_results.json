@@ -1,0 +1,92 @@
+[
+  {
+    "test": "Authentication",
+    "success": true,
+    "message": "Successfully logged in",
+    "timestamp": "2025-09-20T20:04:11.265403"
+  },
+  {
+    "test": "Machines API - GET",
+    "success": true,
+    "message": "Retrieved 7 machines",
+    "timestamp": "2025-09-20T20:04:11.282024"
+  },
+  {
+    "test": "Machines API - CREATE",
+    "success": true,
+    "message": "Created machine: Test Machine 200411",
+    "timestamp": "2025-09-20T20:04:11.313016"
+  },
+  {
+    "test": "Machines API - UPDATE",
+    "success": true,
+    "message": "Successfully updated machine",
+    "timestamp": "2025-09-20T20:04:11.329514"
+  },
+  {
+    "test": "Alarms API - GET",
+    "success": true,
+    "message": "Retrieved 3 alarms",
+    "timestamp": "2025-09-20T20:04:11.360051"
+  },
+  {
+    "test": "Alarms API - CREATE",
+    "success": true,
+    "message": "Created alarm: Temperature threshold exceeded",
+    "timestamp": "2025-09-20T20:04:11.415346"
+  },
+  {
+    "test": "Alarms API - ACKNOWLEDGE",
+    "success": true,
+    "message": "Successfully acknowledged alarm",
+    "timestamp": "2025-09-20T20:04:11.435158"
+  },
+  {
+    "test": "Tickets API - GET",
+    "success": true,
+    "message": "Retrieved 3 tickets",
+    "timestamp": "2025-09-20T20:04:11.454166"
+  },
+  {
+    "test": "Tickets API - CREATE",
+    "success": false,
+    "message": "Create failed: 422",
+    "timestamp": "2025-09-20T20:04:11.487538"
+  },
+  {
+    "test": "DataSources API - GET",
+    "success": true,
+    "message": "Retrieved 5 data sources",
+    "timestamp": "2025-09-20T20:04:11.504673"
+  },
+  {
+    "test": "DataSources API - CREATE",
+    "success": true,
+    "message": "Created data source: Test MQTT Source 200411",
+    "timestamp": "2025-09-20T20:04:11.538359"
+  },
+  {
+    "test": "Reports API - GENERATE",
+    "success": false,
+    "message": "Generate failed: 404",
+    "timestamp": "2025-09-20T20:04:11.567192"
+  },
+  {
+    "test": "User Roles API - GET ROLES",
+    "success": false,
+    "message": "GET roles failed: 404",
+    "timestamp": "2025-09-20T20:04:11.572189"
+  },
+  {
+    "test": "User Roles API - GET USERS",
+    "success": true,
+    "message": "Retrieved 1 users",
+    "timestamp": "2025-09-20T20:04:11.596280"
+  },
+  {
+    "test": "Frontend Connectivity",
+    "success": true,
+    "message": "Frontend is accessible",
+    "timestamp": "2025-09-20T20:04:11.672836"
+  }
+]
