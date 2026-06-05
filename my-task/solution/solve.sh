@@ -2,11 +2,10 @@
 set -euo pipefail
 
 git apply --whitespace=fix << 'PATCH'
+diff --git a/hysteresis.py b/hysteresis.py
 --- a/hysteresis.py
 +++ b/hysteresis.py
-@@ -36,7 +36,7 @@ class HysteresisManager:
-         else:  # anomaly_score < warn_threshold
-             if self.current_status != "OK":
+@@ -38,7 +38,7 @@ class HysteresisManager:
                  self.consecutive_count += 1
                  if self.consecutive_count >= self.required_consecutive:
                      self.current_status = "OK"

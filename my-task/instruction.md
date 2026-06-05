@@ -1,60 +1,58 @@
-# Alarm state does not clear after sensor readings return to normal
+# Alarm state stays stuck even after sensor readings recover
 
-## Context
+## A bit of background
 
-This system monitors industrial sensors in real time. Each sensor reading produces an
-anomaly score between 0 and 1. A score near 0 means the sensor is behaving normally;
-a score near 1 means something is wrong.
+This codebase monitors industrial sensors on a factory floor. Every reading coming
+off a sensor gets scored from 0 to 1 — low scores mean everything is running
+normally, high scores mean something is off. The system uses a class called
+`HysteresisManager` in `hysteresis.py` to decide what the current alarm status is.
 
-To avoid false alarms on noisy data, the system uses a debounce mechanism — it only
-changes the alarm status after several consecutive readings in agreement. This is
-handled by `HysteresisManager` in `hysteresis.py`. The manager maintains three
-states for each sensor:
+The reason it exists is to stop the alarm from flickering. Noisy sensors can bounce
+around unpredictably, so rather than reacting to every single reading, the system
+requires a run of consistent readings before it commits to changing state. You need
+several high readings in a row before it trips to `WARN`, then several more before
+it goes to `ALARM`. The same logic applies going the other direction — you should
+need a run of consistently low, normal readings before the alarm clears back to `OK`.
 
-- **OK** — normal operation
-- **WARN** — elevated readings detected, watching closely
-- **ALARM** — confirmed anomaly, action required
+## What's actually going wrong
 
-The idea is that you can't trigger an alarm on a single spike, and you can't clear an
-alarm on a single good reading either. A sustained run of readings is required to move
-the status in either direction.
+The problem is that once a sensor has escalated all the way to `ALARM`, it never
+comes back down to `OK` on its own — even if the sensor behaves perfectly normally
+for a long time afterward.
 
-## What's broken
+You can reproduce it like this: create a fresh `HysteresisManager`, feed it enough
+high-scoring readings to push it into `ALARM`, then start feeding it readings with
+scores around 0.1 — clearly in the normal range, nothing borderline. Keep going for
+as long as you want. The status never changes. It stays stuck at `ALARM` forever.
 
-When a sensor has been in `ALARM` and then starts producing consistently low anomaly
-scores — the kind that should indicate a return to normal — the `HysteresisManager`
-never transitions back to `OK`. The alarm stays latched indefinitely, even after many
-readings that are clearly in the normal range.
+That's the first part of the bug.
 
-To reproduce: create a `HysteresisManager`, push it into `ALARM` state by feeding it
-several high-anomaly readings, then feed it a long run of clearly normal readings
-(anomaly score around `0.1`). The status should eventually become `"OK"` but it
-doesn't — it stays stuck.
+The second part is connected: once a recovery does eventually happen (say, via the
+`reset()` method), the internal counter that tracks consecutive readings should be
+sitting at zero. If it's not, the very next anomaly cycle will behave strangely —
+either triggering too early or requiring extra readings to escalate. So the recovery
+path needs to leave the counter clean.
 
-Once the status does correctly recover to `"OK"`, the internal debounce counter should
-also be back at zero, so the next anomaly cycle starts cleanly. Currently that is not
-happening either.
+## What should happen instead
 
-## Expected behaviour
+When a sensor that's been in `ALARM` starts producing consistently low anomaly
+readings, the `HysteresisManager` should eventually return `"OK"` from `get_status()`.
+The number of consecutive low readings required to trigger that transition is the
+same count the class already uses for every other state change — nothing new needs
+to be added or configured.
 
-After a sensor has been in `ALARM` and anomaly scores drop back to a clearly normal
-level and stay there for the required number of consecutive readings, `get_status()`
-must return `"OK"`.
-
-The number of consecutive readings required to exit `ALARM` back to `OK` is the same
-`required_consecutive` value already used for all other transitions in the class — no
-new configuration is needed.
-
-Once the `"OK"` transition completes, the internal counter tracking consecutive
-readings must be reset to zero. A subsequent high-anomaly run should trigger the
-full escalation sequence from the beginning, not be affected by leftover state from
-the previous recovery.
+Once `get_status()` starts returning `"OK"`, the debounce counter inside the manager
+should be at zero. The next time anomaly scores start climbing again, the escalation
+sequence should run from scratch, unaffected by whatever happened during the previous
+recovery.
 
 ## Where to look
 
-The bug is in `hysteresis.py`. The `get_status()` method handles each of the three
-score ranges as separate branches. The branch that handles scores in the clearly-normal
-range is where the recovery logic lives — and where something goes wrong when the
-transition to `"OK"` finally fires.
+Everything relevant is inside `hysteresis.py`. The `get_status()` method has three
+separate branches depending on where the incoming score falls. The branch that handles
+scores clearly in the normal range — below both thresholds — is where the recovery
+logic lives. Something in that branch goes wrong specifically when the transition to
+`"OK"` fires.
 
-The `reset()` method and the threshold values are correct and should not be changed.
+The `reset()` method is fine as-is. The threshold values are correct and should stay
+the same. The fix is contained to a single spot in the recovery branch.
