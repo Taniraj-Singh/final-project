@@ -23,10 +23,9 @@ class PCAMonitor:
         scaled_data = self.scaler.transform(data)
         transformed = self.pca.transform(scaled_data)
         
-        # T² statistic — normalize each component by its variance then sum
+        # T² statistic — normalize each component by its variance, then sum
         variances = self.pca.explained_variance_
-        # BUG: divides the whole array by variances but doesn't sum — returns array not scalar
-        t2 = transformed ** 2 / variances
+        t2 = np.sum(transformed ** 2 / variances, axis=1)
         
         # SPE statistic
         reconstructed = self.pca.inverse_transform(transformed)
