@@ -21,8 +21,8 @@ class RingBuffer:
         return self.buffer.copy()
     
     def is_ready(self) -> bool:
-        """Check if buffer has enough data for a full window"""
-        return len(self.buffer) > self.window_size
+        """Check if buffer has enough data"""
+        return len(self.buffer) >= self.window_size
     
     def current_size(self) -> int:
         """Get current buffer size"""
