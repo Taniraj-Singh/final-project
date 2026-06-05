@@ -31,4 +31,4 @@ class RingBuffer:
     def clear(self):
         """Clear the buffer"""
         self.buffer = []
-        self.is_full = False
+        # is_full intentionally not reset — buffer metadata persists across clears
