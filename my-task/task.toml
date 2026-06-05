@@ -1,0 +1,5 @@
+[task]
+author_name  = "Dev"
+author_email = "dev@predictive-maintenance.local"
+difficulty   = "medium"
+category     = "bug_fix"

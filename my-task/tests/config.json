@@ -1,0 +1,20 @@
+{
+  "base_commit": "0bd0968",
+  "fail_to_pass": [
+    "tests/test_hysteresis.py::TestHysteresisAlarmRecovery::test_recovery_from_alarm_to_ok",
+    "tests/test_hysteresis.py::TestHysteresisReset::test_reset_clears_consecutive_counter"
+  ],
+  "pass_to_pass": [
+    "tests/test_hysteresis.py::TestHysteresisOKToWarn::test_single_high_score_does_not_trigger_warn",
+    "tests/test_hysteresis.py::TestHysteresisOKToWarn::test_requires_consecutive_samples_for_warn",
+    "tests/test_hysteresis.py::TestHysteresisOKToWarn::test_interruption_resets_consecutive_counter",
+    "tests/test_hysteresis.py::TestHysteresisWarnToAlarm::test_alarm_requires_consecutive_samples",
+    "tests/test_hysteresis.py::TestHysteresisWarnToAlarm::test_single_alarm_score_from_warn_does_not_alarm",
+    "tests/test_hysteresis.py::TestHysteresisReset::test_reset_clears_state_from_alarm",
+    "tests/test_hysteresis.py::TestHysteresisReset::test_status_after_reset_behaves_like_fresh_instance"
+  ],
+  "test_patch": "",
+  "selected_test_files_to_run": [
+    "tests/test_hysteresis.py"
+  ]
+}

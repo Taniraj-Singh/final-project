@@ -33,8 +33,7 @@ data/
 *.csv
 *.xlsx
 
-# Git
-.git/
+# Git — do NOT exclude .git/ (required by Silver for git reset at runtime)
 .gitignore
 
 # Docker
