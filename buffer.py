@@ -17,8 +17,8 @@ class RingBuffer:
             self.is_full = True
             
     def get_window(self) -> List[Dict[str, Any]]:
-        """Get current window data"""
-        return self.buffer.copy()
+        """Get current window data — returns list copy; dicts are shared references"""
+        return list(self.buffer)
     
     def is_ready(self) -> bool:
         """Check if buffer has enough data"""
