@@ -16,15 +16,17 @@ class PCAMonitor:
         self.is_fitted = True
         
     def monitor(self, data: np.ndarray):
-        """Monitor new data points"""
+        """Monitor new data points for anomalies using T² and SPE statistics"""
         if not self.is_fitted:
             return 0.0, 0.0
             
         scaled_data = self.scaler.transform(data)
         transformed = self.pca.transform(scaled_data)
         
-        # T² statistic
-        t2 = np.sum(transformed**2, axis=1)
+        # T² statistic — normalize each component by its variance then sum
+        variances = self.pca.explained_variance_
+        # BUG: divides the whole array by variances but doesn't sum — returns array not scalar
+        t2 = transformed ** 2 / variances
         
         # SPE statistic
         reconstructed = self.pca.inverse_transform(transformed)
