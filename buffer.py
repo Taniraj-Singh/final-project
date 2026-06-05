@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
 import numpy as np
+import copy
 
 class RingBuffer:
     def __init__(self, window_size: int = 60):
@@ -17,8 +18,8 @@ class RingBuffer:
             self.is_full = True
             
     def get_window(self) -> List[Dict[str, Any]]:
-        """Get current window data — returns list copy; dicts are shared references"""
-        return list(self.buffer)
+        """Get current window data as a deep copy to prevent caller mutation"""
+        return copy.deepcopy(self.buffer)
     
     def is_ready(self) -> bool:
         """Check if buffer has enough data"""
